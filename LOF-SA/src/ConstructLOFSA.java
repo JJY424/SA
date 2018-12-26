@@ -38,7 +38,7 @@ public class ConstructLOFSA
 			if(sa[i]>0 && type[sa[i]-1]==L_TYPE)
 				sa[lbucket[s[sa[i]-1]]++] = sa[i]-1; 
 		}
-		for (int i = 1; i < charNum; i++)  // Reset S-type bucket
+		for (int i = 1; i <= charNum; i++)  // Reset S-type bucket
 	        sbucket[i] = bucket[i] - 1;
 		for(int i = sa.length-1;i>=0;i--)
 		{
@@ -53,9 +53,9 @@ public class ConstructLOFSA
 		int type[] = new int[len];
 		int position[] = new int[len];
 		int name[] = new int[len];
-		int bucket[] = new int[charNum];
-		int lbucket[] = new int[charNum];
-		int sbucket[] = new int[charNum];
+		int bucket[] = new int[charNum+1];
+		int lbucket[] = new int[charNum+1];
+		int sbucket[] = new int[charNum+1];
 		int SA[] = new int[len];
 		Arrays.fill(SA, -1);
 	
@@ -63,7 +63,7 @@ public class ConstructLOFSA
 		{
 			bucket[s[i]]++;
 		}
-		for(int i = 1;i<charNum;i++)
+		for(int i = 1;i<=charNum;i++)
 		{
 			bucket[i]+=bucket[i-1];
 			lbucket[i] = bucket[i-1];
@@ -82,17 +82,18 @@ public class ConstructLOFSA
 		}
 		//count LMS substring
 		int index = 0;
-		for(int i = 1;i<=len;i++)
+		for(int i = 1;i<len;i++)
 		{
 			if(type[i-1]==L_TYPE && type[i]==S_TYPE)
 				position[index++] = i;
 		}
-		//printList(position);
+
 		for(int i = 0;i<index;i++)
 		{
 			SA[sbucket[s[position[i]]]--] = position[i];
 		}
-		
+	
+		//System.out.println("len = "+len+" first");
 		indeced_sort(s, type, SA, lbucket, sbucket,bucket,charNum);
 		//judge if are same LMS substring
 		Arrays.fill(name, -1);
@@ -106,7 +107,6 @@ public class ConstructLOFSA
 			{
 				if(latex>=0 && !is_equals_substring(s, type, latex, x))
 				{
-					System.out.println("namecnt = "+namecnt);
 					namecnt++;
 				}
 					
@@ -138,15 +138,6 @@ public class ConstructLOFSA
 		}
 		else 
 		{
-			for(int i = 0;i<index;i++)
-			{
-				if(i%10==0)
-					System.out.println();
-				if(s[i]>255)
-					System.out.print("???");
-				System.out.print(s1[i]+"  ");
-			}
-			System.out.println("------------------£¿£¿----------------");
 			SA1 = construct_SA(s1, charNum,index);
 		}
 			
@@ -159,18 +150,14 @@ public class ConstructLOFSA
 		}
 		
 		Arrays.fill(SA, -1);
-		int count = 0;
+		
 		for (int i = index - 1; i >= 0; i--) 
 		{
-			System.out.print(SA1[i]+" ");
-			count++;
-			if(count%10==0)
-				System.out.println();
 			SA[sbucket[s[position[SA1[i]]]]--] = position[SA1[i]];
 		}
 		System.out.println();
 	        
-		
+		//System.out.println("len = "+len+" second");
 		indeced_sort(s, type, SA, lbucket, sbucket,bucket,charNum);
 		
 		return SA;
@@ -230,14 +217,22 @@ public class ConstructLOFSA
 	public LOFNode[] construct_LOFSA(int[] s, int i, int j) 
 	{
 		int sa[] = construct_SA(s,i,j);
-		printList(sa);
+		//printList(sa);
 		return ConstructLOF(s,sa);
 	}
 	
 	public void printList(int num[]) 
 	{
+		int count = 0;
 		for(int i = 0;i<num.length;i++)
+		{
+			if(count%10==0)
+				System.out.println();
 			System.out.print(num[i]+" ");
+			count++;
+			
+		}
+			
 		System.out.println();
 	}
 	public static void main(String[] args) 
